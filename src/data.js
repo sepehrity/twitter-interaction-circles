@@ -92,10 +92,25 @@ function countLikes(interactions, likes, screen_name) {
 	}
 }
 
-module.exports = async function getInteractions(screen_name, layers) {
-	const timeline = await getTimeline(screen_name);
-	const liked = await getLiked(screen_name);
+function removeDuplicateObjectsFromArray(arr, uniqueBy) {
+	const seen = new Set();
+	return arr.filter((item) => {
+		const isDuplicate = seen.has(item[uniqueBy]);
+		seen.add(item[uniqueBy]);
+		return !isDuplicate;
+	});
+}
 
+module.exports = async function getInteractions(screen_name, layers) {
+	const _timeline = await getTimeline(screen_name);
+	const _liked = await getLiked(screen_name);
+
+	/**
+	 * First try to fix redundant tweets by remove duplicates
+	 * related to Twtitter docs: https://developer.twitter.com/en/docs/tweets/timelines/guides/working-with-timelines
+	 */
+	const timeline = removeDuplicateObjectsFromArray(_timeline, "created_at");
+	const liked = removeDuplicateObjectsFromArray(_liked, "created_at");
 	/**
 	 * This is the main place where we are going to keep our data as we process it.
 	 * It's an object where the key is the user_id and the values is an object like this:
