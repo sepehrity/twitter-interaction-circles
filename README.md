@@ -39,6 +39,7 @@ Once you have your consumer keys, rename the `.env.example` file `.env` and put 
 ```dotenv
 CONSUMER_KEY=AAAA
 CONSUMER_SECRET=BBBBBB
+CIRCLES_COUNT=SIZE_OF_LAYERS (between 0 and 5)
 SCREEN_NAME=WHATEVER_USERNAME_YOU_WANT
 ```
 

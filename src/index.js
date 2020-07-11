@@ -5,7 +5,14 @@ const {renderText} = require("./text");
 const Twitter = require("twitter-lite");
 
 // Load the environment variables from the .env file
-const {consumer_key, consumer_secret, screen_name} = require("./env");
+const {
+	consumer_key,
+	consumer_secret,
+	screen_name,
+	circles_count,
+} = require("./env");
+
+const {templates} = require("./constants");
 
 /**
  * This is the main function of the app. It need to be a function because we can't have a top level await.
@@ -31,18 +38,23 @@ async function main() {
 	// instead of getMe you could replace it with another method to get a third user to generate their circles
 	const user = await getUser(screen_name);
 
-	// this is how many users we will have for each layer from the inside out
-	const layers = [8, 15, 26];
+	// this is make how many circle layers we will have
+	const circles = templates.slice(0, circles_count);
 
+	// this is how many users we will have for each layer from the inside out
+	const layers = circles.map((c) => c.count);
 	// fetch the interactions
 	const data = await getInteractions(user.screen_name.toLowerCase(), layers);
+
+	// fill circles with users data
+	const outerLayers = circles.map(({count, distance, radius}, index) => {
+		return {distance, count, radius, users: data[index]};
+	});
 
 	// render the image
 	await render([
 		{distance: 0, count: 1, radius: 110, users: [user]},
-		{distance: 200, count: layers[0], radius: 64, users: data[0]},
-		{distance: 330, count: layers[1], radius: 58, users: data[1]},
-		{distance: 450, count: layers[2], radius: 50, users: data[2]},
+		...outerLayers,
 	]);
 
 	// Look at the arguments passed to the cli. If one of them is --text then we want to render a text version of the image too

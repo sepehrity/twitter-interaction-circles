@@ -1,6 +1,9 @@
 const {createCanvas, loadImage} = require("canvas");
 const fs = require("fs");
 
+const {circles_count, screen_name} = require("./env");
+const {image_size, background_color} = require("./constants");
+
 const toRad = (x) => x * (Math.PI / 180);
 
 /**
@@ -14,14 +17,15 @@ const toRad = (x) => x * (Math.PI / 180);
  * @returns {Promise<void>}
  */
 module.exports = async function render(config) {
-	const width = 1000;
-	const height = 1000;
+	const size = image_size[circles_count];
+	const width = size;
+	const height = size;
 
 	const canvas = createCanvas(width, height);
 	const ctx = canvas.getContext("2d");
 
 	// fill the background
-	ctx.fillStyle = "#C5EDCE";
+	ctx.fillStyle = background_color;
 	ctx.fillRect(0, 0, width, height);
 
 	// loop over the layers
@@ -69,7 +73,7 @@ module.exports = async function render(config) {
 	}
 
 	// write the resulting canvas to file
-	const out = fs.createWriteStream("./circle.png");
+	const out = fs.createWriteStream(`./${screen_name}.png`);
 	const stream = canvas.createPNGStream();
 	stream.pipe(out);
 	out.on("finish", () => console.log("Done!"));

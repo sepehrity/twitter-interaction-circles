@@ -1,4 +1,5 @@
 const {getTimeline, getLiked, getAvatars} = require("./api");
+const {circles_count} = require("./env");
 
 /**
  * A small function that records an interaction.
@@ -141,7 +142,7 @@ module.exports = async function getInteractions(screen_name, layers) {
 	// sort the tally array by total descending
 	tally.sort((a, b) => b.total - a.total);
 
-	// Total sum of needed users, it's like layer[0]+layer[1]+layer[2]
+	// Total sum of needed users, it's like layer[0]+layer[1]+layer[2]+layer[3]
 	const maxCount = layers.reduce((total, current) => total + current, 0);
 
 	// take only the top part of the array between 0 and the total needed
@@ -158,9 +159,9 @@ module.exports = async function getInteractions(screen_name, layers) {
 
 	// split the head back into layers
 	const result = [];
-	result.push(head.splice(0, layers[0]));
-	result.push(head.splice(0, layers[1]));
-	result.push(head.splice(0, layers[2]));
+	Array.apply(null, Array(Number(circles_count))).forEach((_, i) =>
+		result.push(head.splice(0, layers[i]))
+	);
 
 	return result;
 };
