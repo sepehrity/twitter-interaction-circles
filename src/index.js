@@ -54,7 +54,7 @@ async function main() {
 
 	// render the image
 	await render([
-		{distance: 0, count: 1, radius: 110, users: [user]},
+		{distance: 0, count: 1, radius: 220, users: [user]},
 		...outerLayers,
 	]);
 

@@ -1,7 +1,7 @@
 const {createCanvas, loadImage} = require("canvas");
 const fs = require("fs");
 
-const {circles_count, screen_name} = require("./env");
+const {circles_count, username} = require("./env");
 const {image_size, background_color} = require("./constants");
 
 const toRad = (x) => x * (Math.PI / 180);
@@ -30,15 +30,16 @@ module.exports = async function render(config) {
 
 	// loop over the layers
 	for (const [layerIndex, layer] of config.entries()) {
-		const {count, radius, distance, users} = layer;
+		console.log(`Drawing Layer ${layerIndex}`);
 
+		const {count, radius, distance, users} = layer;
 		const angleSize = 360 / count;
 
 		// loop over each circle of the layer
 		for (let i = 0; i < count; i++) {
 			// We need an offset or the first circle will always on the same line and it looks weird
 			// Try removing this to see what happens
-			const offset = layerIndex * 30;
+			const offset = layerIndex * 25;
 
 			// i * angleSize is the angle at which our circle goes
 			// We need to converting to radiant to work with the cos/sin
@@ -73,7 +74,7 @@ module.exports = async function render(config) {
 	}
 
 	// write the resulting canvas to file
-	const out = fs.createWriteStream(`./${screen_name}.png`);
+	const out = fs.createWriteStream(`./${username} [${circles_count}].png`);
 	const stream = canvas.createPNGStream();
 	stream.pipe(out);
 	out.on("finish", () => console.log("Done!"));
