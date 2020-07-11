@@ -14,8 +14,7 @@ async function getTimelinePage(screen_name, page, max_id = null) {
 	};
 
 	console.log("Fetching Timeline page " + page);
-	const res = await globalThis.TwitterClient.get("statuses/user_timeline", params);
-	return res;
+	return await globalThis.TwitterClient.get("statuses/user_timeline", params);
 }
 
 /**
@@ -53,8 +52,7 @@ async function getLikedPage(screen_name, page, max_id = null) {
 	};
 
 	console.log("Fetching Liked page " + page);
-	const res = await globalThis.TwitterClient.get("favorites/list", params);
-	return res;
+	return await globalThis.TwitterClient.get("favorites/list", params);
 }
 
 /**
@@ -81,22 +79,34 @@ async function getLiked(screen_name) {
  * @param ids an array of ID strings
  * @returns {Promise<any>}
  */
-async function getAvatars(ids) {
+
+async function getAvatarsPage(ids, page) {
 	let params = {
 		user_id: ids,
 		include_entities: false,
 	};
 
-	console.log("Fetching avatars " + ids.length);
+	console.log("Fetching Avatars page " + page);
+	return await globalThis.TwitterClient.get("users/lookup", params);
+}
 
-	const res = await globalThis.TwitterClient.get("users/lookup", params);
+async function getAvatars(ids) {
+	let page = 1;
+	let data = [];
+	
+	for (i = 0; i < ids.length; i++) {
+		const result = await getAvatarsPage(ids[i], page++);
+		data = [...data, ...result];
+	}
 
-	return Object.fromEntries(
-		res.map((user) => [
+	const avatars = Object.fromEntries(
+		data.map((user) => [
 			user.id_str,
 			user.profile_image_url_https.replace("normal", "400x400"),
 		])
 	);
+
+	return avatars;
 }
 
 /**
@@ -123,5 +133,5 @@ module.exports = {
 	getLiked,
 	getTimeline,
 	getAvatars,
-	getUser
+	getUser,
 };

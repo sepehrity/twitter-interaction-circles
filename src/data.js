@@ -101,6 +101,12 @@ function removeDuplicateObjectsFromArray(arr, uniqueBy) {
 	});
 }
 
+function arrayIntoChunks(arr, size) {
+	return Array.from({length: Math.ceil(arr.length / size)}, (_, i) =>
+		arr.slice(i * size, i * size + size)
+	);
+}
+
 module.exports = async function getInteractions(screen_name, layers) {
 	const _timeline = await getTimeline(screen_name);
 	const _liked = await getLiked(screen_name);
@@ -165,9 +171,9 @@ module.exports = async function getInteractions(screen_name, layers) {
 
 	// fetch the avatars for these users.
 	// The API allows only 100 users on this call.
-	// Pagination could be added to support more but the image would get super busy
 	const ids = head.map((u) => u.id);
-	const avatars = await getAvatars(ids);
+	const chunksIds = arrayIntoChunks(ids, 100);
+	const avatars = await getAvatars(chunksIds);
 	for (const i of head) {
 		i.avatar = avatars[i.id];
 	}
