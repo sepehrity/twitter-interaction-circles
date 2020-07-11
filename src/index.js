@@ -1,14 +1,11 @@
-const dotenv = require("dotenv");
 const getInteractions = require("./data");
 const render = require("./image");
 const {getUser} = require("./api");
 const {renderText} = require("./text");
 const Twitter = require("twitter-lite");
 
-/**
- * Load the environment variables from the .env file
- */
-dotenv.config();
+// Load the environment variables from the .env file
+const {consumer_key, consumer_secret, screen_name} = require("./env");
 
 /**
  * This is the main function of the app. It need to be a function because we can't have a top level await.
@@ -16,8 +13,8 @@ dotenv.config();
 async function main() {
 	// Create an instance of the API client using the consumer keys for your app
 	const client = new Twitter({
-		consumer_key: process.env.CONSUMER_KEY,
-		consumer_secret: process.env.CONSUMER_SECRET,
+		consumer_key,
+		consumer_secret,
 	});
 
 	// Use the previous client to fetch the bearer token
@@ -32,7 +29,7 @@ async function main() {
 
 	// fetch the information of the logged in user
 	// instead of getMe you could replace it with another method to get a third user to generate their circles
-	const user = await getUser("WHATEVER_USERNAME_YOU_WANT");
+	const user = await getUser(screen_name);
 
 	// this is how many users we will have for each layer from the inside out
 	const layers = [8, 15, 26];

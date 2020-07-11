@@ -39,6 +39,7 @@ Once you have your consumer keys, rename the `.env.example` file `.env` and put 
 ```dotenv
 CONSUMER_KEY=AAAA
 CONSUMER_SECRET=BBBBBB
+SCREEN_NAME=WHATEVER_USERNAME_YOU_WANT
 ```
 
 Make sure you don't have spaces.
