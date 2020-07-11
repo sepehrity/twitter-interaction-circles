@@ -1,13 +1,62 @@
 const dotenv = require("dotenv");
+const commandLineArgs = require("command-line-args");
+const commandLineUsage = require("command-line-usage");
 
 dotenv.config();
 
 const variables = {
 	consumer_key: "CONSUMER_KEY",
 	consumer_secret: "CONSUMER_SECRET",
-	screen_name: "SCREEN_NAME",
-	circles_count: "CIRCLES_COUNT",
+	layers: "LAYERS",
+	username: "USERNAME",
 };
+
+const optionDefinitions = [
+	{
+		name: "text",
+		alias: "t",
+		type: Boolean,
+		defaultOption: false,
+	},
+	{name: "username", alias: "u", type: String},
+	{name: "layers", alias: "l", type: Number},
+];
+
+const options = commandLineArgs(optionDefinitions);
+
+const sections = [
+	{
+		header: "Twitter Interaction Circle",
+		content: "Make interaction circles for Twitter.",
+	},
+	{
+		header: "Options",
+		optionList: [
+			{
+				name: "username",
+				typeLabel: "{underline string}",
+				description: "Twitter username",
+				alias: "u",
+			},
+			{
+				name: "layers",
+				typeLabel: "{underline number}",
+				description: "Count of circle layers (default: 3)",
+				alias: "l",
+			},
+			{
+				name: "text",
+				typeLabel: "{underline boolean}",
+				description:
+					"Generate a text version of the image. (default: false)",
+				alias: "t",
+			},
+		],
+	},
+];
+const usage = commandLineUsage(sections);
+
+console.log(usage);
 
 const consumer_key = process.env[variables.consumer_key];
 
@@ -21,18 +70,20 @@ if (!consumer_secret || consumer_secret === "") {
 	throw new Error(`Please define ${variables.consumer_secret} in .env`);
 }
 
-const circles_count = process.env[variables.circles_count];
+const circles_count = options.layers || 3;
 
-if (!circles_count || circles_count === "") {
-	throw new Error(`Please define ${variables.circles_count} in .env`);
-} else if (circles_count === "0" || Math.floor(circles_count) > 4) {
-	throw new Error(`Your ${variables.circles_count} must be between 0 and 5`);
+if (circles_count === "0" || Math.floor(circles_count) > 6) {
+	throw new Error("Layers must be between 0 and 6.");
 }
 
-const screen_name = process.env[variables.screen_name];
+const username = options.username;
 
-if (!screen_name || screen_name === "") {
-	throw new Error(`Please define ${variables.screen_name} in .env`);
+if (!username || username === "") {
+	throw new Error(
+		`Please define ${variables.username} => yarn build -u username`
+	);
 }
 
-module.exports = {consumer_key, consumer_secret, circles_count, screen_name};
+const text = options.text;
+
+module.exports = {consumer_key, consumer_secret, circles_count, username, text};

@@ -8,8 +8,9 @@ const Twitter = require("twitter-lite");
 const {
 	consumer_key,
 	consumer_secret,
-	screen_name,
+	username,
 	circles_count,
+	text,
 } = require("./env");
 
 const {templates} = require("./constants");
@@ -36,7 +37,7 @@ async function main() {
 
 	// fetch the information of the logged in user
 	// instead of getMe you could replace it with another method to get a third user to generate their circles
-	const user = await getUser(screen_name);
+	const user = await getUser(username);
 
 	// this is make how many circle layers we will have
 	const circles = templates.slice(0, circles_count);
@@ -58,8 +59,7 @@ async function main() {
 	]);
 
 	// Look at the arguments passed to the cli. If one of them is --text then we want to render a text version of the image too
-	const shouldRenderText = process.argv.find((arg) => arg === "--text");
-	if (shouldRenderText) await renderText(data);
+	if (text) await renderText(data);
 }
 
 // entry point

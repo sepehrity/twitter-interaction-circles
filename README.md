@@ -18,14 +18,17 @@ yarn install
 
 Run with 
 ```shell script
-yarn build
+yarn build -u username
 ```
 
-You can also generate a text version of the image with the complete list of the presented users with the following command
+Here are the Commands list:
 ```shell script
-yarn build --text
+Options
+  -u, --username string   Twitter username
+  -l, --layers number     Count of circle layers (default: 3)
+  -t, --text boolean      Generate a text version of the image (default: false).
 ```
-The output will go in `users.txt` file in the root of the project
+The output will go in `username [LAYERS_COUNT].txt` file in the root of the project
 
 ## Setup
 To use the project you will need Twitter API keys. You can get one on the [developer portal](https://developer.twitter.com).
@@ -39,8 +42,6 @@ Once you have your consumer keys, rename the `.env.example` file `.env` and put 
 ```dotenv
 CONSUMER_KEY=AAAA
 CONSUMER_SECRET=BBBBBB
-CIRCLES_COUNT=SIZE_OF_LAYERS (between 0 and 5)
-SCREEN_NAME=WHATEVER_USERNAME_YOU_WANT
 ```
 
 Make sure you don't have spaces.
